@@ -1,0 +1,7 @@
+Test Case 1 for the function get_entropy_of_dataset PASSED
+0.9886994082884974
+Test Case 2 for the function get_entropy_of_attribute PASSED
+0.9531852102225534
+Test Case 3 for the function get_entropy_of_attribute PASSED
+0.8828560636920489
+({'Color': 0.035514198065944025, 'Size': 0.10584334459644851, 'Shape': 0.035879877173714214}, 'Size')
