@@ -1,7 +1,7 @@
 Command :  python DT_SampleTestCase.py (Make sure to uncomment)
 
 
-dummy
+dummy <br>
 0.9886994082884974
 0.9531852102225535
 0.8828560636920489
@@ -9,7 +9,7 @@ dummy
 ({'Color': 0.035514198065943914, 'Size': 0.10584334459644851, 'Shape': 0.035879877173714214}, 'Size')
 
 
-test_data_2
+test_data_2 <br>
 1.496387226993904
 1.4552781809692574
 1.4945417695708572
@@ -19,4 +19,6 @@ test_data_2
 ({'fever': 0.0411090460246466, 'cough': 0.00184545742304687, 'breathing_issues': 0.08114429383526844, 'lung_issues': 0.020425044855175933}, 'breathing_issues')
 
 
+```
 Tool to find IG : https://planetcalc.com/8421/?license=1
+```
