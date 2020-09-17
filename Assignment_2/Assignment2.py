@@ -1,102 +1,172 @@
 
-def A_star_Traversal(cost, heuristic, start_point, goals):
-    l = []
-    size =len(cost[0])
-    Visit = []
-    Frontier = []
-    value = 0
-
-    Frontier.append((start_point,0 + heuristic[start_point]))
-    while (Frontier):
-        Frontier = sorted(Frontier,key = lambda x:(x[1],x[0]), reverse=True)
-        t = Frontier.pop()
-        node = t[0]
-        value = t[1] - heuristic[node]
-        Visit.append(node)
-        l.append(t)
-        if node in goals:
-            n = len(l)
-            for i in range(n-1,0,-1):
-                if cost[l[i-1][0]][l[i][0]]<= 0 and cost[l[i-1][0]][l[i][0]] != l[i][1]-l[i-1][1]+heuristic[l[i-1][0]]-heuristic[l[i][0]]:
-                    l.remove(l[i-1])
-            l = [x[0] for x in l]
-            return l
-        for i in range(1,size):
-            if cost[node][i]>0 and i not in Visit:
-                p = 1
-                for j in Frontier:
-                    if i == j[0]:
-                        p = 0
-                        if cost[node][i]+value+heuristic[i] < j[1]:
-                            Frontier.remove((i, j[1]))
-                            Frontier.append((i, cost[node][i] + value + heuristic[i]))
-                if(p):
-                    Frontier.append((i, cost[node][i] + value + heuristic[i]))
-    l = []
-    return l
 
 def UCS_Traversal(cost, start_point, goals):
-    l = []
-    size = len(cost[0])
-    Visit = []
-    Frontier = []
-    value = 0
-
-    Frontier.append((start_point,0))
-    while (Frontier):
-        Frontier = sorted(Frontier,key = lambda x:(x[1],x[0]), reverse=True)
-        t = Frontier.pop()
-        node = t[0]
-        value = t[1]
-        Visit.append(node)
-        l.append(t)
-        if node in goals:
-            n = len(l)
-            for i in range(n-1,0,-1):
-                if cost[l[i-1][0]][l[i][0]] != l[i][1]-l[i-1][1]:
-                    l.remove(l[i-1])
-            l = [x[0] for x in l]
-            return l
-        for i in range(1,size):
-            if cost[node][i]>0 and i not in Visit:
-                p = 1
-                for j in Frontier:
-                    if i == j[0]:
-                        p = 0
-                        if cost[node][i]+value < j[1]:
-                            Frontier.remove((i, j[1]))
-                            Frontier.append((i, cost[node][i] + value))
-                if(p):
-                    Frontier.append((i, cost[node][i] + value))
+   
     l = []
     return l
 
-def DFS_Traversal(cost, start_point, goals):
-    l = []
-    size = len(cost[0]) - 1
-    Visit = []
-    Frontier = []
+def recursive_dfs(cost,start,goals,path,explored_list):
 
-    Frontier.append(start_point)
-    while (Frontier):
-        node = Frontier.pop()
-        Visit.append(node)
-        l.append(node)
-        if node in goals:
-            return l
-        p = 0
-        for i in range(size,0,-1):
-            if cost[node][i]>0 and i not in Visit:
-                if i in Frontier:
-                    Frontier.remove(i)
-                Frontier.append(i)
-                p = 1
-        if p==0:
-            l.pop()
-            while(l and Frontier and cost[l[-1]][Frontier[-1]]<=0):
-                l.pop()
-    l = []
-    return l
+	explored_list[start] = 1		#explored set , mark a node to prevent cyclic looping
+
+	for goal in goals:				#check if the current node is any of the  goal node
+
+		if start == goal:			#if yes add to path list 
+
+			path.append(start)
+
+			path.append("END")
+		
+			return path				#return the path list 
+
+	
+
+	path.append(start)				#since we're currently here , this node is along the path
+
+	dead_end = 1
+	
+	for node in range(1,len(cost)): #looking at all the adjacent and reachable neighs from this node
+		
+		if cost[start][node] > 0 and explored_list[node]==0:	#neigh that is reachable and yet to be visited 
+
+			dead_end = 0
+			
+			print('*'*10*start)
+			print(start ,"------>",node)						#current edge
+			print("explored :: ", explored_list)				#current explored list
+			print("pre path :: ",path)								#displaying path list
+			 
+			recursive_dfs(cost, node, goals, path, explored_list) #call recursive dfs on current neighbor
+
+			print("post path in ",start," :: ",path)
+
+			if(path[-1]=="END"):
+
+				return path
+
+
+
+
+
+
+			
+
+	if(dead_end):
+
+		path.pop()
+		print('popping out  ', start)
+
+	elif(path[-1] != 'END'):
+		path.pop()
+			
+	return path 
+
+
+
+
+
+
+	
+
+
+
+
+def DFS_Traversal(cost,start,goals):
+
+    path =[]
+
+
+    explored_list = [0 for i in range(0,len(cost))]
+
+
+    node_route = recursive_dfs(cost,start,goals,path,explored_list)
+
+
+    return node_route[:-1]
+
+
+class node:
+
+	def __init__(self,child,parent,cost):
+
+		self.child = child
+		self.parent = parent
+		self.cost = cost
+
+	def get_child(self):
+
+		return self.child
+
+
+	
+
+
+
+
+
+def UCS_Traversal(cost,start,goals):
+
+	print('*'*10,"UCS BEGINS")
+
+	
+	frontier =[]
+
+	explored = [0 for i in range(0,len(cost))]
+
+	frontier.append(node(start,start,0))	
+	
+	
+	while len(frontier):
+
+		frontier.sort(key = lambda objs : (objs.cost,objs.child))
+
+		current_node = frontier.pop(0)
+
+		child_value = current_node.get_child()
+
+		print("curr edge ::",child_value)
+
+		explored[child_value] = 1
+
+		for goal in goals:
+
+			if goal == child_value:
+
+				path_list=[]
+
+				back_track = current_node
+
+				while True :
+
+					path_list.insert(0, back_track.get_child())
+
+					back_track = back_track.parent
+
+					if back_track.parent==start:
+
+						path_list.insert(0, back_track.get_child())
+
+						break
+
+
+				return path_list
+
+		for adj in range(1,len(cost)):
+
+			edge_cost =cost[child_value][adj]
+
+			if explored[adj]==0 and edge_cost > 0:
+
+				new_node = node(adj,current_node, edge_cost+current_node.cost)
+
+				print(child_value,">>>>>>",adj," :: ",edge_cost)
+
+				frontier.append(new_node)
+
+		print(explored)
+        
+        
+       return []
 
 
 '''
