@@ -51,7 +51,7 @@ def test_case():
 
 if __name__=="__main__":
 	test_case()
-	'''
+	
 	df = pd.read_csv("dummy.csv")
 	print(get_entropy_of_dataset(df))
 	print(get_entropy_of_attribute(df,"Color"))
@@ -68,4 +68,3 @@ if __name__=="__main__":
 	print(get_entropy_of_attribute(df,"lung_issues"))
 	print(get_entropy_of_attribute(df,"Covid"))
 	print(get_selected_attribute(df))
-	'''

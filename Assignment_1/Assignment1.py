@@ -1,6 +1,3 @@
-'''
-Assume df is a pandas dataframe object of the dataset given
-'''
 import numpy as np
 import pandas as pd
 import random
@@ -10,84 +7,71 @@ import random
 	#output:int/float/double/large
 
 def get_entropy_of_dataset(df):
-	entropy = 0
-	
-	labels = df[df.columns[-1]]
-	value, counts = np.unique(labels, return_counts=True)
-	norm_counts = counts / counts.sum()
-	entropy =  -(norm_counts * np.log(norm_counts)/np.log(2)).sum()
-	return entropy
+    entropy = 0
+    total_samples = df.shape[0] #tuple output and index the row alone
+    #unique_classes = df[df.columns[-1]].nunique()
+    counts_per_class = df[df.columns[-1]].value_counts() #a series it is
+    for class_counts in counts_per_class: #the summation
+        class_proportion = class_counts/total_samples
+        entropy += -1*class_proportion*np.log2(class_proportion)
+    return entropy
 
+def get_entropy(df, attribute, value):
+    entropy = 0
+    total_samples_attribute = df[attribute].value_counts()[value]
+    #unique_classes = df[df.columns[-1]].nunique()
+    counts_per_attribute = df.groupby(attribute)[df.columns[-1]].value_counts()[value]
+    for counts in counts_per_attribute: #the summation
+        proportion = counts/total_samples_attribute
+        entropy += -1*proportion*np.log2(proportion)
+    return entropy
 
 
 '''Return entropy of the attribute provided as parameter'''
 	#input:pandas_dataframe,str   {i.e the column name ,ex: Temperature in the Play tennis dataset}
 	#output:int/float/double/large
 def get_entropy_of_attribute(df,attribute):
-	entropy_of_attribute = 0
-	
-	value, counts = np.unique(df[attribute], return_counts=True)
-	norm_counts = counts / counts.sum()
-	class_entropy = []
-
-	for i in value:
-		df_class = df[df[attribute] == i]
-		labels = df_class[df.columns[-1]]
-		target_value, target_counts = np.unique(labels, return_counts=True)
-		target_norm_counts = target_counts / target_counts.sum()
-		entropy =  -(target_norm_counts * np.log(target_norm_counts)/np.log(2)).sum()
-		class_entropy.append(entropy)
-
-	class_entropy = np.array(class_entropy)
-	entropy_of_attribute = sum(norm_counts * class_entropy)
-	return abs(entropy_of_attribute)
-
-
+    entropy_of_attribute = 0
+    total_samples = df.shape[0]
+    attribute_values = df[attribute].unique()
+    entropy_for_values = dict()
+    count_attribute_values = df[attribute].value_counts()
+    i = df.groupby(attribute)[df.columns[-1]].value_counts()
+    for value in attribute_values:
+        entropy_for_values[value]=get_entropy(df, attribute, value) 
+    for key,values in entropy_for_values.items():
+        entropy_of_attribute += (count_attribute_values[key]/total_samples)*entropy_for_values[key]
+    return abs(entropy_of_attribute)
 
 '''Return Information Gain of the attribute provided as parameter'''
 	#input:int/float/double/large,int/float/double/large
 	#output:int/float/double/large
 def get_information_gain(df,attribute):
 	information_gain = 0
-	s = get_entropy_of_dataset(df)
-	i = get_entropy_of_attribute(df,attribute)
-	information_gain = s - i
+	information_gain = get_entropy_of_dataset(df) - get_entropy_of_attribute(df, attribute)
 	return information_gain
 
 
+'''
+Return a tuple with the first element as a dictionary which has IG of all columns 
+and the second element as a string with the name of the column selected
 
+example : ({'A':0.123,'B':0.768,'C':1.23} , 'C')
+'''
 ''' Returns Attribute with highest info gain'''  
 	#input: pandas_dataframe
 	#output: ({dict},'str')     
 def get_selected_attribute(df):
    
-	information_gains={}
-	selected_column=''
-	
-	attributes = df.columns
-	for i in range(len(attributes)-1):
-		if attributes[i] not in information_gains:
-			information_gains[attributes[i]] = get_information_gain(df,attributes[i])
-		
-		
-	value = max(information_gains.values())
-	selected_column = list(information_gains.keys())[list(information_gains.values()).index(value)]
+        information_gains={}
+        selected_column=''
+        IG = 0
+        l = len(df.columns)
+        columns = df.columns[:l-1]
+        for column in columns:
+            information_gains[column] = get_information_gain(df,column)
+            if(information_gains[column] > IG):
+                IG = information_gains[column]
+                selected_column = column
+        return (information_gains,selected_column)
 
-	'''
-	Return a tuple with the first element as a dictionary which has IG of all columns 
-	and the second element as a string with the name of the column selected
-
-	example : ({'A':0.123,'B':0.768,'C':1.23} , 'C')
-	'''
-	return (information_gains,selected_column)
-
-
-
-'''
-------- TEST CASES --------
-How to run sample test cases ?
-
-Simply run the file DT_SampleTestCase.py
-Follow convention and do not change any file / function names
-
-'''
