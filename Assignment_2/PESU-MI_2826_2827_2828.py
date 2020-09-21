@@ -1,39 +1,39 @@
 
 def A_star_Traversal(cost, heuristic, start_point, goals):
-    l = []
-    size =len(cost[0])
-    Visit = []
-    Frontier = []
-    value = 0
+	l = []
+	size =len(cost[0])
+	Visit = []
+	Frontier = []
+	value = 0
 
-    Frontier.append((start_point,0 + heuristic[start_point]))
-    while (Frontier):
-        Frontier = sorted(Frontier,key = lambda x:(x[1],x[0]), reverse=True)
-        t = Frontier.pop()
-        node = t[0]
-        value = t[1] - heuristic[node]
-        Visit.append(node)
-        l.append(t)
-        if node in goals:
-            n = len(l)
-            for i in range(n-1,0,-1):
-                if cost[l[i-1][0]][l[i][0]]<= 0 and cost[l[i-1][0]][l[i][0]] != l[i][1]-l[i-1][1]+heuristic[l[i-1][0]]-heuristic[l[i][0]]:
-                    l.remove(l[i-1])
-            l = [x[0] for x in l]
-            return l
-        for i in range(1,size):
-            if cost[node][i]>0 and i not in Visit:
-                p = 1
-                for j in Frontier:
-                    if i == j[0]:
-                        p = 0
-                        if cost[node][i]+value+heuristic[i] < j[1]:
-                            Frontier.remove((i, j[1]))
-                            Frontier.append((i, cost[node][i] + value + heuristic[i]))
-                if(p):
-                    Frontier.append((i, cost[node][i] + value + heuristic[i]))
-    l = []
-    return l
+	Frontier.append((start_point,0 + heuristic[start_point]))
+	while (Frontier):
+		Frontier = sorted(Frontier,key = lambda x:(x[1],x[0]), reverse=True)
+		t = Frontier.pop()
+		node = t[0]
+		value = t[1] - heuristic[node]
+		Visit.append(node)
+		l.append(t)
+		if node in goals:
+			n = len(l)
+			for i in range(n-1,0,-1):
+				if cost[l[i-1][0]][l[i][0]]<= 0 and cost[l[i-1][0]][l[i][0]] != l[i][1]-l[i-1][1]+heuristic[l[i-1][0]]-heuristic[l[i][0]]:
+					l.remove(l[i-1])
+			l = [x[0] for x in l]
+			return l
+		for i in range(1,size):
+			if cost[node][i]>0 and i not in Visit:
+				p = 1
+				for j in Frontier:
+					if i == j[0]:
+						p = 0
+						if cost[node][i]+value+heuristic[i] < j[1]:
+							Frontier.remove((i, j[1]))
+							Frontier.append((i, cost[node][i] + value + heuristic[i]))
+				if(p):
+					Frontier.append((i, cost[node][i] + value + heuristic[i]))
+	l = []
+	return l
 
 def UCS_Traversal(cost,start_point,goals):
 	l = []
@@ -93,33 +93,33 @@ def UCS_Traversal(cost,start_point,goals):
 	# print(cost)
 	
 	return l
-    
+	
 def DFS_Traversal(cost, start_point, goals):
-    l = []
-    size = len(cost[0]) - 1
-    Visit = []
-    Frontier = []
+	l = []
+	size = len(cost[0]) - 1
+	Visit = []
+	Frontier = []
 
-    Frontier.append(start_point)
-    while (Frontier):
-        node = Frontier.pop()
-        Visit.append(node)
-        l.append(node)
-        if node in goals:
-            return l
-        p = 0
-        for i in range(size,0,-1):
-            if cost[node][i]>0 and i not in Visit:
-                if i in Frontier:
-                    Frontier.remove(i)
-                Frontier.append(i)
-                p = 1
-        if p==0:
-            l.pop()
-            while(l and Frontier and cost[l[-1]][Frontier[-1]]<=0):
-                l.pop()
-    l = []
-    return l
+	Frontier.append(start_point)
+	while (Frontier):
+		node = Frontier.pop()
+		Visit.append(node)
+		l.append(node)
+		if node in goals:
+			return l
+		p = 0
+		for i in range(size,0,-1):
+			if cost[node][i]>0 and i not in Visit:
+				if i in Frontier:
+					Frontier.remove(i)
+				Frontier.append(i)
+				p = 1
+		if p==0:
+			l.pop()
+			while(l and Frontier and cost[l[-1]][Frontier[-1]]<=0):
+				l.pop()
+	l = []
+	return l
 
 
 '''
@@ -147,15 +147,15 @@ NOTE : you are allowed to write other helper functions that you can call in the 
 '''
 
 def tri_traversal(cost, heuristic, start_point, goals):
-    l = []
+	l = []
 
-    t1 = DFS_Traversal(cost, start_point, goals)
+	t1 = DFS_Traversal(cost, start_point, goals)
 
-    t2 = UCS_Traversal(cost, start_point, goals)
-    
-    t3 = A_star_Traversal(cost, heuristic, start_point, goals)
-    
-    l.append(t1)
-    l.append(t2)
-    l.append(t3)
-    return l
+	t2 = UCS_Traversal(cost, start_point, goals)
+	
+	t3 = A_star_Traversal(cost, heuristic, start_point, goals)
+	
+	l.append(t1)
+	l.append(t2)
+	l.append(t3)
+	return l
