@@ -1,3 +1,4 @@
+
 def A_star_Traversal(cost,heuristic,start_point,goals):
 	l = []
 	Astart_destination = goals[:]
@@ -15,8 +16,7 @@ def A_star_Traversal(cost,heuristic,start_point,goals):
 		if node in Astart_destination:
 			if node not in GOALS:
 				GOALS[node] = (total_cost,path)            
-			Astart_destination.remove(node)
-			
+				
 			if Astart_destination == []:
 				break
 			
@@ -32,12 +32,12 @@ def A_star_Traversal(cost,heuristic,start_point,goals):
 			
 			if visit[i] and cost[node][i] > 0:
 				c = [(q,r,s) for p,q,r,s in priority_queue if p == i] # total_cost
-				if c != [] and path_cost + cost[node][i] + heuristic[i] < c[0][1]:
+				if c != [] and path_cost + cost[node][i] + heuristic[i] <= c[0][1]:
 					child_path = path[:]
 					child_path.append(i)
 					g = path_cost+cost[node][i]
 					f = g + heuristic[i]
-					priority_queue.remove((i,c[0][0],c[0][1],c[0][2]))
+					#priority_queue.remove((i,c[0][0],c[0][1],c[0][2]))
 					priority_queue.append((i,g,f,child_path))
 					
 		priority_queue = sorted(priority_queue, key = lambda x: x[2])
@@ -46,9 +46,22 @@ def A_star_Traversal(cost,heuristic,start_point,goals):
 	# print(path)
 	# print(GOALS)
 	
-	GOALS = {k: v for k, v in sorted(GOALS.items(), key=lambda item: item[1][0])}
-	
 	try:
+		GOALS = {k: v for k, v in sorted(GOALS.items(), key=lambda item: item[1][0])}
+
+		keys = list(GOALS)
+		i=0
+		while i<len(keys)-1:
+			if GOALS[keys[i]][0] ==  GOALS[keys[i+1]][0]:	# path_cost is same
+				s = sorted([GOALS[keys[i]],GOALS[keys[i+1]]])
+				GOALS.pop(list(GOALS.keys())[list(GOALS.values()).index(s[-1])])
+				i+=1
+			i+=1
+
+		
+		GOALS = {k: v for k, v in sorted(GOALS.items(), key=lambda item: item[1][0])}
+	
+
 		cost,l = GOALS.pop(list(GOALS.keys())[0])
 	except:
 		pass
@@ -75,8 +88,6 @@ def UCS_Traversal(cost,start_point,goals):
 			
 			if node not in GOALS:
 				GOALS[node] = (path_cost,path)
-
-			ucs_destination.remove(node)
 			
 			if ucs_destination == []:
 				break
@@ -96,18 +107,31 @@ def UCS_Traversal(cost,start_point,goals):
 				if c != [] and path_cost + cost[node][i] <= c[0][0]:  # path to child is less, then update
 					child_path = path[:]
 					child_path.append(i)
-					priority_queue.remove((i,c[0][0],c[0][1]))  
+					#priority_queue.remove((i,c[0][0],c[0][1]))  
 					priority_queue.append((i,path_cost+cost[node][i],child_path))
 				
 				
 		priority_queue = sorted(priority_queue, key = lambda x: x[1])
+
 		# print(priority_queue)
 		
-	# print(path)
-	# print(GOALS)
-	GOALS = {k: v for k, v in sorted(GOALS.items(), key=lambda item: item[1][0])}
-	
+
+
 	try:
+		GOALS = {k: v for k, v in sorted(GOALS.items(), key=lambda item: item[1][0])}
+
+		keys = list(GOALS)
+		i=0
+		while i<len(keys)-1:
+			if GOALS[keys[i]][0] ==  GOALS[keys[i+1]][0]:	# path_cost is same
+				s = sorted([GOALS[keys[i]],GOALS[keys[i+1]]])
+				GOALS.pop(list(GOALS.keys())[list(GOALS.values()).index(s[-1])])
+				i+=1
+			i+=1
+
+		
+		GOALS = {k: v for k, v in sorted(GOALS.items(), key=lambda item: item[1][0])}
+
 		cost,l = GOALS.pop(list(GOALS.keys())[0])
 	except:
 		pass
@@ -115,12 +139,32 @@ def UCS_Traversal(cost,start_point,goals):
 	# print(cost)
 	
 	return l
-
-def DFS_Traversal(
-	#add your parameters 
-):
+	
+def DFS_Traversal(cost, start_point, goals):
 	l = []
+	size = len(cost[0]) - 1
+	Visit = []
+	Frontier = []
 
+	Frontier.append(start_point)
+	while (Frontier):
+		node = Frontier.pop()
+		Visit.append(node)
+		l.append(node)
+		if node in goals:
+			return l
+		p = 0
+		for i in range(size,0,-1):
+			if cost[node][i]>0 and i not in Visit:
+				if i in Frontier:
+					Frontier.remove(i)
+				Frontier.append(i)
+				p = 1
+		if p==0:
+			l.pop()
+			while(l and Frontier and cost[l[-1]][Frontier[-1]]<=0):
+				l.pop()
+	l = []
 	return l
 
 
@@ -151,14 +195,13 @@ NOTE : you are allowed to write other helper functions that you can call in the 
 def tri_traversal(cost, heuristic, start_point, goals):
 	l = []
 
-	t1 = DFS_Traversal()
-	
-	t2 = UCS_Traversal(cost,start_point,goals)
+	t1 = DFS_Traversal(cost, start_point, goals)
+
+	t2 = UCS_Traversal(cost, start_point, goals)
 	
 	t3 = A_star_Traversal(cost, heuristic, start_point, goals)
-
+	
 	l.append(t1)
 	l.append(t2)
 	l.append(t3)
-
 	return l
