@@ -91,7 +91,7 @@ def derivative_MSE(true_labels, predicted_labels):
 class NN:
 
         ''' X and Y are dataframes '''
-        #Cunstructor used for instialisations
+        #Constructor used for instialisations
         def __init__(self):
                 self.list_of_layers = []
                 self.loss_function = None
@@ -121,6 +121,8 @@ class NN:
                                 output = X[j]
                                 for layer in self.list_of_layers:
                                         output =  layer.forward_network_calculation(output)
+					#calculate forward prop from end -to -end
+					
                                 
                                 #Calculate error using loss function
                                 error += self.loss_function(Y[j], output)
@@ -232,23 +234,34 @@ if __name__=="__main__":
         '''
         #Read the csv file
         data = pd.read_csv("LBW_Dataset.csv")
+	
         #Data Preprocessing:
+	
         #Fill missing values of Age with mean as they almost follow a normal distribution and unknown would be varying on either side of median:
         data['Age'].fillna(value=round(data['Age'].mean(),0), inplace=True)
+	
+	
         #Filling Nan values of Weight based on the average nearest weights of another women belonging to same community of upper and lower values in the same column. 
         fill_weight()
-        #Missing values in Delivery Phase is filled with 1 as those missing values belong to below 24 yers age and all below 24 years are having 1 as value. 
+	
+        #Missing values in Delivery Phase is filled with 1 as those missing values belong to below 24 years age and all below 24 years are having 1 as value. 
         data['Delivery phase'].fillna(value='1', inplace=True)
+	
         #Again HB is a normal distribution hence is replaced with mean value.
         data['HB'].fillna(value=round(data['HB'].mean(), 1), inplace=True)
-        #BP has an outlier hence mean is not choosen as its more prone to outlier instead median is choosen as less prone to outliers.
+	
+        #BP has an outlier, hence mean is not choosen as its more prone to outlier instead median is choosen as less prone to outliers.
         data['BP'].fillna(value=data['BP'].median(), inplace=True)
+	
         #All values are 5 hence is replaced with 5 using bfill.
         data['Education'].fillna(method='bfill', inplace=True)
+	
         #Missing values are replaced by 1 for residence as all those which are missing belong to community 1 and most of community one are residents of same town
         data['Residence'].fillna(value=1, inplace=True)
+	
         #Stored it into one csv file.
         data.to_csv("LBW_cleaned_dataset.csv", index=False)
+	
         '''
 
         #Read from updated csv file ater preprocessing.
