@@ -22,7 +22,7 @@
 
 	*The NN implementation is scalable as any number of layers can be added without any change in core.
 
-    *Any number of loss functions or activation functions can be added but a layercan take one activation function at a time.
+    *Any number of loss functions or activation functions can be added but a layer can take only one activation function at a time.
 
 
 
