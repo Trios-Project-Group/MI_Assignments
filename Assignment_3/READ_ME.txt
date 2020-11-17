@@ -72,7 +72,7 @@
 	        Dimension of Bias - (1 X 1)
 	        Dimension of Intermideate Output - (1 X 1)
 	        Then it is passed throuch Activation layer - Sigmoid (Doesn't change dimension)
-	        Final dimension of output - (1 X 1
+	        Final dimension of output - (1 X 1)
 
 
 
